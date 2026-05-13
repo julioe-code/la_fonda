@@ -17,9 +17,15 @@
     <label for="estado_mesa">Estado de la Mesa *</label>
     <select id="estado_mesa" name="estado_mesa" required>
         <option value="">Seleccione un estado</option>
-        {% for valor, etiqueta in estados %}
-            <option value="{{ valor }}" {% if mesa and mesa.estado_mesa == valor %}selected{% endif %}>{{ etiqueta }}</option>
-        {% endfor %}
+        {% if estados %}
+            {% for valor, etiqueta in estados %}
+                <option value="{{ valor }}" {% if mesa and mesa.estado_mesa == valor %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        {% else %}
+            <option value="Libre">Libre</option>
+            <option value="Ocupada">Ocupada</option>
+            <option value="Reservada">Reservada</option>
+        {% endif %}
     </select>
 
     <div class="form-actions">

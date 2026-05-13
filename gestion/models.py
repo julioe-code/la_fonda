@@ -37,14 +37,14 @@ class Empleado(models.Model):
 
 class Mesa(models.Model):
     ESTADOS_MESA = [
-        ('Disponible', 'Disponible'),
+        ('Libre', 'Libre'),
         ('Ocupada', 'Ocupada'),
         ('Reservada', 'Reservada'),
     ]
 
     numero_mesa = models.PositiveIntegerField(unique=True)
     capacidad = models.PositiveIntegerField()
-    estado_mesa = models.CharField(max_length=20, choices=ESTADOS_MESA, default='Disponible')
+    estado_mesa = models.CharField(max_length=20, choices=ESTADOS_MESA, default='Libre')
 
     class Meta:
         db_table = 'Mesa'
