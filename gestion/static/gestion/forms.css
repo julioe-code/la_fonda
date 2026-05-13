@@ -1,0 +1,52 @@
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(109, 40, 217, 0.2);
+    border-radius: 16px;
+    background: rgba(248, 242, 255, 0.9);
+    color: #1a1a1a;
+    font-size: 1rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: rgba(109, 40, 217, 0.55);
+    box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.15);
+    background: #fff;
+}
+
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+button,
+input[type=submit] {
+    font-family: inherit;
+}
+
+.form-check-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.form-check-login input {
+    width: auto;
+    margin: 0;
+}

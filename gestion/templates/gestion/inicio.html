@@ -1,0 +1,47 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Panel de Control - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2 class="page-title">Panel Principal</h2>
+
+<p class="section-description">Resumen general del sistema de gestión</p>
+
+<div class="cards-grid">
+    <div class="card" onclick="location.href='/clientes/';">
+        <h3>Clientes</h3>
+        <p>{{ total_clientes }}</p>
+        <small>Clientes registrados</small>
+    </div>
+
+    <div class="card" onclick="location.href='/empleados/';">
+        <h3>Empleados</h3>
+        <p>{{ total_empleados }}</p>
+        <small>Personal del restaurante</small>
+    </div>
+
+    <div class="card" onclick="location.href='/mesas/';">
+        <h3>Mesas</h3>
+        <p>{{ total_mesas }}</p>
+        <small>Mesas disponibles</small>
+    </div>
+
+    <div class="card" onclick="location.href='/platos/';">
+        <h3>Platos</h3>
+        <p>{{ total_platos }}</p>
+        <small>Items en el menú</small>
+    </div>
+
+    <div class="card" onclick="location.href='/ordenes/';">
+        <h3>Ordenes</h3>
+        <p>{{ total_ordenes }}</p>
+        <small>Ordenes generadas</small>
+    </div>
+
+    <div class="card" onclick="location.href='/facturas/';">
+        <h3>Facturas</h3>
+        <p>{{ total_facturas }}</p>
+        <small>Facturas emitidas</small>
+    </div>
+</div>
+{% endblock %}
