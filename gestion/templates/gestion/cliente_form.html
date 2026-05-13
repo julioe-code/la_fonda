@@ -1,0 +1,25 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{% if cliente %}Editar Cliente{% else %}Crear Cliente{% endif %} - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>{% if cliente %}Editar Cliente{% else %}Crear Cliente{% endif %}</h2>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="nombre">Nombre *</label>
+    <input type="text" id="nombre" name="nombre" value="{{ cliente.nombre|default:'' }}" required>
+
+    <label for="telefono">Teléfono</label>
+    <input type="text" id="telefono" name="telefono" value="{{ cliente.telefono|default:'' }}">
+
+    <label for="correo">Correo</label>
+    <input type="email" id="correo" name="correo" value="{{ cliente.correo|default:'' }}">
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'lista_clientes' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

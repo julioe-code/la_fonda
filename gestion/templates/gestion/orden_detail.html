@@ -1,0 +1,83 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Detalle de Orden #{{ orden.id }} - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>Detalle de Orden #{{ orden.id }}</h2>
+
+<div class="card">
+    <p><strong>Cliente:</strong> {{ orden.cliente.nombre }}</p>
+    <p><strong>Empleado:</strong> {{ orden.empleado.nombre }}</p>
+    <p><strong>Mesa:</strong> {{ orden.mesa.numero_mesa }}</p>
+    <p><strong>Fecha:</strong> {{ orden.fecha_hora }}</p>
+    <p><strong>Total:</strong> ${{ orden.total }}</p>
+</div>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="estado_orden">Estado de la orden</label>
+    <select id="estado_orden" name="estado_orden">
+        {% for valor, etiqueta in estados %}
+            <option value="{{ valor }}" {% if orden.estado_orden == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Actualizar estado</button>
+        <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Volver a órdenes</a>
+    </div>
+</form>
+
+<h3>Detalles</h3>
+{% if detalles %}
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Plato</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.plato.nombre_plato }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>$ {{ detalle.precio_unitario }}</td>
+                <td>$ {{ detalle.subtotal }}</td>
+                <td class="actions">
+                    <a href="{% url 'eliminar_detalle_orden' detalle.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>No hay detalles agregados aún.</p>
+{% endif %}
+
+<h3>Agregar plato a la orden</h3>
+<form method="post" action="{% url 'agregar_detalle_orden' orden.id %}" class="form-container">
+    {% csrf_token %}
+
+    <label for="plato">Plato</label>
+    <select id="plato" name="plato" required>
+        <option value="">Seleccione un plato</option>
+        {% for plato in platos %}
+            <option value="{{ plato.id }}">{{ plato.nombre_plato }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="cantidad">Cantidad</label>
+    <input type="number" id="cantidad" name="cantidad" min="1" value="1" required>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-success">Agregar</button>
+    </div>
+</form>
+{% endblock %}

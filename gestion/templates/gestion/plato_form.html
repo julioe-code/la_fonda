@@ -1,0 +1,33 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{% if plato %}Editar Plato{% else %}Crear Plato{% endif %} - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>{% if plato %}Editar Plato{% else %}Crear Plato{% endif %}</h2>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="nombre_plato">Nombre del Plato *</label>
+    <input type="text" id="nombre_plato" name="nombre_plato" value="{{ plato.nombre_plato|default:'' }}" required>
+
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" name="descripcion">{{ plato.descripcion|default:'' }}</textarea>
+
+    <label for="precio">Precio *</label>
+    <input type="number" id="precio" name="precio" value="{{ plato.precio|default:'' }}" step="0.01" required>
+
+    <label for="categoria">Categoría</label>
+    <input type="text" id="categoria" name="categoria" value="{{ plato.categoria|default:'' }}">
+
+    <label class="form-checkbox">
+        <input type="checkbox" id="disponible" name="disponible" {% if plato and plato.disponible %}checked{% endif %}>
+        Disponible
+    </label>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'lista_platos' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Eliminar Orden - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>Eliminar Orden</h2>
+<p>¿Estás seguro de que deseas eliminar la orden <strong>#{{ orden.id }}</strong>?</p>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

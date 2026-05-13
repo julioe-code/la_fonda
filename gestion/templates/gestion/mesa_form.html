@@ -1,0 +1,30 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}{% if mesa %}Editar Mesa{% else %}Crear Mesa{% endif %} - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>{% if mesa %}Editar Mesa{% else %}Crear Mesa{% endif %}</h2>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="numero_mesa">Número de Mesa *</label>
+    <input type="number" id="numero_mesa" name="numero_mesa" value="{{ mesa.numero_mesa|default:'' }}" required>
+
+    <label for="capacidad">Capacidad *</label>
+    <input type="number" id="capacidad" name="capacidad" value="{{ mesa.capacidad|default:'' }}" required>
+
+    <label for="estado_mesa">Estado de la Mesa *</label>
+    <select id="estado_mesa" name="estado_mesa" required>
+        <option value="">Seleccione un estado</option>
+        {% for valor, etiqueta in estados %}
+            <option value="{{ valor }}" {% if mesa and mesa.estado_mesa == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'lista_mesas' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

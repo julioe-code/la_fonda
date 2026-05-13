@@ -1,0 +1,56 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Crear Orden - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>Crear Orden</h2>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="cliente">Cliente *</label>
+    <select id="cliente" name="cliente" required>
+        <option value="">Seleccione un cliente</option>
+        {% for cliente in clientes %}
+            <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="empleado">Empleado *</label>
+    <select id="empleado" name="empleado" required>
+        <option value="">Seleccione un empleado</option>
+        {% for empleado in empleados %}
+            <option value="{{ empleado.id }}">{{ empleado.nombre }} - {{ empleado.cargo }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="mesa">Mesa *</label>
+    <select id="mesa" name="mesa" required>
+        <option value="">Seleccione una mesa</option>
+        {% for mesa in mesas %}
+            <option value="{{ mesa.id }}">Mesa {{ mesa.numero_mesa }} ({{ mesa.estado_mesa }})</option>
+        {% endfor %}
+    </select>
+
+    <h3>Platos</h3>
+    <p>Agrega al menos un plato con su cantidad.</p>
+
+    <div class="plato-row">
+        <label for="platos_0_plato">Plato *</label>
+        <select id="platos_0_plato" name="platos[0][plato]" required>
+            <option value="">Seleccione un plato</option>
+            {% for plato in platos %}
+                <option value="{{ plato.id }}">{{ plato.nombre_plato }} - ${{ plato.precio }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="platos_0_cantidad">Cantidad *</label>
+        <input type="number" id="platos_0_cantidad" name="platos[0][cantidad]" min="1" value="1" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Crear Orden</button>
+        <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
