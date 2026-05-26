@@ -233,9 +233,11 @@ def Lista_mesa(request):
 @login_required
 def crear_mesa(request):
     """Crear nueva mesa"""
+    estados = Mesa.ESTADOS_MESA
     if request.method == 'POST':
         numero_mesa = request.POST.get('numero_mesa')
         capacidad = request.POST.get('capacidad')
+        estado_mesa = request.POST.get('estado_mesa', 'Libre')
         
         if not numero_mesa or not capacidad:
             messages.error(request, 'El número de mesa y capacidad son requeridos')
@@ -244,12 +246,13 @@ def crear_mesa(request):
         else:
             Mesa.objects.create(
                 numero_mesa=int(numero_mesa),
-                capacidad=int(capacidad)
+                capacidad=int(capacidad),
+                estado_mesa=estado_mesa
             )
             messages.success(request, 'Mesa creada exitosamente')
             return redirect('lista_mesas')
     
-    return render(request, 'gestion/mesa_form.html')
+    return render(request, 'gestion/mesa_form.html', {'estados': estados})
 
 
 @login_required
@@ -567,5 +570,3 @@ def eliminar_factura(request, id):
         return redirect('lista_facturas')
     
     return render(request, 'gestion/factura_confirm_delete.html', {'factura': factura})
-
-

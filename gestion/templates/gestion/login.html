@@ -19,15 +19,15 @@
 
         {% if messages %}
             {% for message in messages %}
-                <div class="auth-alert auth-alert-{{ message.tags }}">
+                <div class="auth-alert {{ message.tags }}">
                     {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
 
         <div class="auth-tabs">
-            <button class="auth-tab active" onclick="showForm('login')">Iniciar Sesión</button>
-            <button class="auth-tab" onclick="showForm('register')">Registrarse</button>
+            <button type="button" class="auth-tab active" onclick="showForm(event, 'login')">Iniciar Sesión</button>
+            <button type="button" class="auth-tab" onclick="showForm(event, 'register')">Registrarse</button>
         </div>
 
         <!-- Formulario de Login -->
@@ -86,7 +86,7 @@
     </div>
 
     <script>
-        function showForm(formId) {
+        function showForm(event, formId) {
             // Ocultar todos los formularios
             document.querySelectorAll('.auth-form').forEach(form => {
                 form.classList.remove('active');
@@ -101,7 +101,7 @@
             document.getElementById(formId).classList.add('active');
 
             // Activar el tab correspondiente
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
         }
     </script>
 </body>
