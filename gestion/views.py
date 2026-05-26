@@ -493,6 +493,10 @@ def eliminar_detalle_orden(request, id):
 def eliminar_orden(request, id):
     """Eliminar orden"""
     orden = get_object_or_404(Orden, id=id)
+
+    if orden.estado_orden == 'Facturada':
+        messages.error(request, 'No se puede eliminar una orden que ya está facturada.')
+        return redirect('lista_ordenes')
     
     if request.method == 'POST':
         orden.delete()
@@ -561,6 +565,10 @@ def eliminar_factura(request, id):
     """Eliminar factura"""
     factura = get_object_or_404(Factura, id=id)
     
+    if factura.orden.estado_orden == 'Facturada':
+        messages.error(request, 'No se puede eliminar una factura de una orden ya facturada.')
+        return redirect('lista_facturas')
+
     if request.method == 'POST':
         orden = factura.orden
         factura.delete()

@@ -48,7 +48,11 @@
                 <td><strong>$ {{ orden.total }}</strong></td>
                 <td class="actions">
                     <a href="{% url 'editar_orden' orden.id %}" class="action-btn action-btn-edit">Ver/Editar</a>
-                    <a href="{% url 'eliminar_orden' orden.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% if orden.estado_orden != 'Facturada' %}
+                        <a href="{% url 'eliminar_orden' orden.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% else %}
+                        <span class="badge badge-info">Facturada</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

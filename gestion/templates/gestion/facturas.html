@@ -35,7 +35,7 @@
                 <td><strong>$ {{ factura.total_factura }}</strong></td>
                 <td><span class="badge badge-info">{{ factura.metodo_pago }}</span></td>
                 <td class="actions">
-                    <a href="{% url 'eliminar_factura' factura.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    <span class="badge badge-info">No eliminable</span>
                 </td>
             </tr>
             {% endfor %}
