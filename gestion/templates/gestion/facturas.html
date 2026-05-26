@@ -6,7 +6,10 @@
 <h2>Gestión de Facturas</h2>
 
 <div class="page-actions">
-    <a href="{% url 'crear_factura' %}" class="btn btn-success">+ Crear Nueva Factura</a>
+    {% load role_tags %}
+    {% if user|has_group:'Administrador,Cajero' %}
+        <a href="{% url 'crear_factura' %}" class="btn btn-success">+ Crear Nueva Factura</a>
+    {% endif %}
 </div>
 
 {% if facturas %}
@@ -35,7 +38,7 @@
                 <td><strong>$ {{ factura.total_factura }}</strong></td>
                 <td><span class="badge badge-info">{{ factura.metodo_pago }}</span></td>
                 <td class="actions">
-                    <a href="{% url 'eliminar_factura' factura.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    <span class="badge badge-info">No eliminable</span>
                 </td>
             </tr>
             {% endfor %}

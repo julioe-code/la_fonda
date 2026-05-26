@@ -6,7 +6,10 @@
 <h2>Gestión de Órdenes</h2>
 
 <div class="page-actions">
-    <a href="{% url 'crear_orden' %}" class="btn btn-success">+ Crear Nueva Orden</a>
+    {% load role_tags %}
+    {% if user|has_group:'Administrador,Mesero' %}
+        <a href="{% url 'crear_orden' %}" class="btn btn-success">+ Crear Nueva Orden</a>
+    {% endif %}
 </div>
 
 {% if ordenes %}
@@ -48,7 +51,13 @@
                 <td><strong>$ {{ orden.total }}</strong></td>
                 <td class="actions">
                     <a href="{% url 'editar_orden' orden.id %}" class="action-btn action-btn-edit">Ver/Editar</a>
-                    <a href="{% url 'eliminar_orden' orden.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% if user|has_group:'Administrador' %}
+                        {% if orden.estado_orden != 'Facturada' %}
+                            <a href="{% url 'eliminar_orden' orden.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                        {% else %}
+                            <span class="badge badge-info">Facturada</span>
+                        {% endif %}
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

@@ -13,6 +13,9 @@
     <p><strong>Total:</strong> ${{ orden.total }}</p>
 </div>
 
+{% load role_tags %}
+
+{% if user|has_group:'Administrador,Mesero' %}
 <form method="post" class="form-container">
     {% csrf_token %}
 
@@ -28,6 +31,12 @@
         <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Volver a órdenes</a>
     </div>
 </form>
+{% else %}
+<div class="no-data">
+    <p>Solo el Administrador o el Mesero pueden actualizar el estado de la orden.</p>
+    <a href="{% url 'lista_ordenes' %}" class="btn btn-secondary">Volver a órdenes</a>
+</div>
+{% endif %}
 
 <h3>Detalles</h3>
 {% if detalles %}
@@ -50,7 +59,11 @@
                 <td>$ {{ detalle.precio_unitario }}</td>
                 <td>$ {{ detalle.subtotal }}</td>
                 <td class="actions">
-                    <a href="{% url 'eliminar_detalle_orden' detalle.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% if user|has_group:'Administrador,Mesero' %}
+                        <a href="{% url 'eliminar_detalle_orden' detalle.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% else %}
+                        <span class="badge badge-info">Solo lectura</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -61,6 +74,7 @@
 <p>No hay detalles agregados aún.</p>
 {% endif %}
 
+{% if user|has_group:'Administrador,Mesero' %}
 <h3>Agregar plato a la orden</h3>
 <form method="post" action="{% url 'agregar_detalle_orden' orden.id %}" class="form-container">
     {% csrf_token %}
@@ -80,4 +94,9 @@
         <button type="submit" class="btn btn-success">Agregar</button>
     </div>
 </form>
+{% else %}
+<div class="no-data">
+    <p>Solo el Administrador o Mesero pueden modificar la orden.</p>
+</div>
+{% endif %}
 {% endblock %}
