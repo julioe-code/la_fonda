@@ -19,14 +19,26 @@
     </header>
 
     <nav>
-        <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">Inicio</a>
-        <a href="{% url 'lista_clientes' %}" class="{% if request.resolver_match.url_name == 'lista_clientes' %}active{% endif %}">Clientes</a>
-        <a href="{% url 'lista_empleados' %}" class="{% if request.resolver_match.url_name == 'lista_empleados' %}active{% endif %}">Empleados</a>
-        <a href="{% url 'lista_mesas' %}" class="{% if request.resolver_match.url_name == 'lista_mesas' %}active{% endif %}">Mesas</a>
-        <a href="{% url 'lista_platos' %}" class="{% if request.resolver_match.url_name == 'lista_platos' %}active{% endif %}">Platos</a>
-        <a href="{% url 'lista_ordenes' %}" class="{% if request.resolver_match.url_name == 'lista_ordenes' %}active{% endif %}">Órdenes</a>
-        <a href="{% url 'lista_facturas' %}" class="{% if request.resolver_match.url_name == 'lista_facturas' %}active{% endif %}">Facturas</a>
         {% if user.is_authenticated %}
+            {% load role_tags %}
+            <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">Inicio</a>
+            {% if user|has_group:'Administrador,Mesero,Cajero' %}
+                <a href="{% url 'lista_clientes' %}" class="{% if request.resolver_match.url_name == 'lista_clientes' %}active{% endif %}">Clientes</a>
+            {% endif %}
+            {% if user|has_group:'Administrador' %}
+                <a href="{% url 'lista_empleados' %}" class="{% if request.resolver_match.url_name == 'lista_empleados' %}active{% endif %}">Empleados</a>
+                <a href="{% url 'lista_usuarios' %}" class="{% if request.resolver_match.url_name == 'lista_usuarios' %}active{% endif %}">Usuarios</a>
+            {% endif %}
+            {% if user|has_group:'Administrador,Mesero' %}
+                <a href="{% url 'lista_mesas' %}" class="{% if request.resolver_match.url_name == 'lista_mesas' %}active{% endif %}">Mesas</a>
+            {% endif %}
+            {% if user|has_group:'Administrador,Mesero,Cajero' %}
+                <a href="{% url 'lista_platos' %}" class="{% if request.resolver_match.url_name == 'lista_platos' %}active{% endif %}">Platos</a>
+                <a href="{% url 'lista_ordenes' %}" class="{% if request.resolver_match.url_name == 'lista_ordenes' %}active{% endif %}">Órdenes</a>
+            {% endif %}
+            {% if user|has_group:'Administrador,Cajero' %}
+                <a href="{% url 'lista_facturas' %}" class="{% if request.resolver_match.url_name == 'lista_facturas' %}active{% endif %}">Facturas</a>
+            {% endif %}
             <a href="{% url 'logout' %}" class="right-link">Cerrar Sesión</a>
         {% else %}
             <a href="{% url 'login' %}" class="right-link">Iniciar Sesión</a>

@@ -1,4 +1,5 @@
 {% extends 'gestion/base.html' %}
+{% load role_tags %}
 
 {% block title %}Empleados - Restaurante Pasta La Vista{% endblock %}
 
@@ -6,7 +7,9 @@
 <h2>Gestión de Empleados</h2>
 
 <div class="page-actions">
-    <a href="{% url 'crear_empleado' %}" class="btn btn-success">+ Crear Nuevo Empleado</a>
+    {% if user|has_group:'Administrador' %}
+        <a href="{% url 'crear_empleado' %}" class="btn btn-success">+ Crear Nuevo Empleado</a>
+    {% endif %}
 </div>
 
 {% if empleados %}
@@ -31,8 +34,12 @@
                 <td>{{ empleado.telefono|default:"N/A" }}</td>
                 <td>{{ empleado.correo|default:"N/A" }}</td>
                 <td class="actions">
-                    <a href="{% url 'editar_empleado' empleado.id %}" class="action-btn action-btn-edit">Editar</a>
-                    <a href="{% url 'eliminar_empleado' empleado.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% if user|has_group:'Administrador' %}
+                        <a href="{% url 'editar_empleado' empleado.id %}" class="action-btn action-btn-edit">Editar</a>
+                        <a href="{% url 'eliminar_empleado' empleado.id %}" class="action-btn action-btn-delete">Eliminar</a>
+                    {% else %}
+                        <span class="badge badge-info">Solo lectura</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

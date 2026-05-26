@@ -6,7 +6,10 @@
 <h2>Gestión de Facturas</h2>
 
 <div class="page-actions">
-    <a href="{% url 'crear_factura' %}" class="btn btn-success">+ Crear Nueva Factura</a>
+    {% load role_tags %}
+    {% if user|has_group:'Administrador,Cajero' %}
+        <a href="{% url 'crear_factura' %}" class="btn btn-success">+ Crear Nueva Factura</a>
+    {% endif %}
 </div>
 
 {% if facturas %}

@@ -42,6 +42,10 @@ urlpatterns = [
     path('ordenes/<int:orden_id>/agregar-detalle/', views.agregar_detalle_orden, name='agregar_detalle_orden'),
     path('ordenes/detalle/<int:id>/eliminar/', views.eliminar_detalle_orden, name='eliminar_detalle_orden'),
     
+    # Usuario/Rol URLs
+    path('usuarios/', views.Lista_usuarios, name='lista_usuarios'),
+    path('usuarios/<int:id>/editar/', views.editar_usuario, name='editar_usuario'),
+    
     # Factura URLs
     path('facturas/', views.Lista_facturas, name='lista_facturas'),
     path('facturas/crear/', views.crear_factura, name='crear_factura'),

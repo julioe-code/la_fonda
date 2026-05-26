@@ -1,0 +1,24 @@
+{% extends 'gestion/base.html' %}
+
+{% block title %}Asignar Rol - Restaurante Pasta La Vista{% endblock %}
+
+{% block content %}
+<h2>Asignar rol al usuario {{ usuario.username }}</h2>
+
+<form method="post" class="form-container">
+    {% csrf_token %}
+
+    <label for="role">Rol</label>
+    <select id="role" name="role" required>
+        <option value="">Seleccione un rol</option>
+        {% for rol in roles %}
+            <option value="{{ rol.name }}" {% if usuario.groups.first and usuario.groups.first.name == rol.name %}selected{% endif %}>{{ rol.name }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Guardar rol</button>
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

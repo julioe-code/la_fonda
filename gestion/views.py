@@ -1,10 +1,37 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Cliente, Empleado, Mesa, Plato, Orden, DetalleOrden, Factura
 from decimal import Decimal
+from functools import wraps
+
+
+def user_in_group(user, group_names):
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    if isinstance(group_names, str):
+        names = [name.strip() for name in group_names.split(',') if name.strip()]
+    else:
+        names = group_names
+    return user.groups.filter(name__in=names).exists()
+
+
+def role_required(group_names):
+    def decorator(view_func):
+        @wraps(view_func)
+        @login_required
+        def wrapper(request, *args, **kwargs):
+            if user_in_group(request.user, group_names):
+                return view_func(request, *args, **kwargs)
+            messages.error(request, 'No tienes permiso para acceder a esta sección.')
+            return redirect('inicio')
+        return wrapper
+    return decorator
+
 
 # Vistas Para Autenticación
 
@@ -51,6 +78,11 @@ def register_view(request):
         else:
             # Crear usuario
             user = User.objects.create_user(username=username, email=email, password=password1)
+            try:
+                group = Group.objects.get(name='Mesero')
+            except Group.DoesNotExist:
+                group = Group.objects.create(name='Mesero')
+            user.groups.add(group)
             login(request, user)
             messages.success(request, 'Registro exitoso. Bienvenido al sistema')
             return redirect('inicio')
@@ -93,7 +125,7 @@ def Lista_clientes(request):
     return render(request, 'gestion/clientes.html', {'clientes': clientes})
 
 
-@login_required
+@role_required(['Administrador'])
 def crear_cliente(request):
     """Crear nuevo cliente"""
     if request.method == 'POST':
@@ -115,7 +147,7 @@ def crear_cliente(request):
     return render(request, 'gestion/cliente_form.html')
 
 
-@login_required
+@role_required(['Administrador'])
 def editar_cliente(request, id):
     """Editar cliente"""
     cliente = get_object_or_404(Cliente, id=id)
@@ -135,7 +167,7 @@ def editar_cliente(request, id):
     return render(request, 'gestion/cliente_form.html', {'cliente': cliente})
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_cliente(request, id):
     """Eliminar cliente"""
     cliente = get_object_or_404(Cliente, id=id)
@@ -152,14 +184,14 @@ def eliminar_cliente(request, id):
 # CRUD Empleado
 
 
-@login_required
+@role_required(['Administrador'])
 def Lista_empleados(request):
     """Listar todos los empleados"""
     empleados = Empleado.objects.all().order_by('-id')
     return render(request, 'gestion/empleados.html', {'empleados': empleados})
 
 
-@login_required
+@role_required(['Administrador'])
 def crear_empleado(request):
     """Crear nuevo empleado"""
     if request.method == 'POST':
@@ -184,7 +216,7 @@ def crear_empleado(request):
     return render(request, 'gestion/empleado_form.html', {'cargos': cargos})
 
 
-@login_required
+@role_required(['Administrador'])
 def editar_empleado(request, id):
     """Editar empleado"""
     empleado = get_object_or_404(Empleado, id=id)
@@ -206,7 +238,7 @@ def editar_empleado(request, id):
     return render(request, 'gestion/empleado_form.html', {'empleado': empleado, 'cargos': cargos})
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_empleado(request, id):
     """Eliminar empleado"""
     empleado = get_object_or_404(Empleado, id=id)
@@ -223,14 +255,14 @@ def eliminar_empleado(request, id):
 # CRUD Mesa
 
 
-@login_required
+@role_required(['Administrador','Mesero'])
 def Lista_mesa(request):
     """Listar todas las mesas"""
     mesas = Mesa.objects.all().order_by('numero_mesa')
     return render(request, 'gestion/mesas.html', {'mesas': mesas})
 
 
-@login_required
+@role_required(['Administrador'])
 def crear_mesa(request):
     """Crear nueva mesa"""
     estados = Mesa.ESTADOS_MESA
@@ -255,7 +287,7 @@ def crear_mesa(request):
     return render(request, 'gestion/mesa_form.html', {'estados': estados})
 
 
-@login_required
+@role_required(['Administrador'])
 def editar_mesa(request, id):
     """Editar mesa"""
     mesa = get_object_or_404(Mesa, id=id)
@@ -280,7 +312,7 @@ def editar_mesa(request, id):
     return render(request, 'gestion/mesa_form.html', {'mesa': mesa, 'estados': estados})
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_mesa(request, id):
     """Eliminar mesa"""
     mesa = get_object_or_404(Mesa, id=id)
@@ -295,14 +327,14 @@ def eliminar_mesa(request, id):
 
 # CRUD Plato
 
-@login_required
+@role_required(['Administrador','Mesero','Cajero'])
 def Lista_platos(request):
     """Listar todos los platos"""
     platos = Plato.objects.all().order_by('-id')
     return render(request, 'gestion/platos.html', {'platos': platos})
 
 
-@login_required
+@role_required(['Administrador'])
 def crear_plato(request):
     """Crear nuevo plato"""
     if request.method == 'POST':
@@ -328,7 +360,7 @@ def crear_plato(request):
     return render(request, 'gestion/plato_form.html')
 
 
-@login_required
+@role_required(['Administrador'])
 def editar_plato(request, id):
     """Editar plato"""
     plato = get_object_or_404(Plato, id=id)
@@ -350,7 +382,7 @@ def editar_plato(request, id):
     return render(request, 'gestion/plato_form.html', {'plato': plato})
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_plato(request, id):
     """Eliminar plato"""
     plato = get_object_or_404(Plato, id=id)
@@ -367,14 +399,14 @@ def eliminar_plato(request, id):
 # CRUD Orden
 
 
-@login_required
+@role_required(['Administrador','Mesero','Cajero'])
 def Lista_ordenes(request):
     """Listar todas las órdenes"""
     ordenes = Orden.objects.all().order_by('-fecha_hora')
     return render(request, 'gestion/ordenes.html', {'ordenes': ordenes})
 
 
-@login_required
+@role_required(['Administrador','Mesero'])
 def crear_orden(request):
     """Crear nueva orden con platos"""
     if request.method == 'POST':
@@ -427,12 +459,16 @@ def crear_orden(request):
     return render(request, 'gestion/orden_form.html', context)
 
 
-@login_required
+@role_required(['Administrador','Mesero','Cajero'])
 def editar_orden(request, id):
     """Editar orden y sus detalles"""
     orden = get_object_or_404(Orden, id=id)
     
     if request.method == 'POST':
+        if not user_in_group(request.user, ['Administrador', 'Mesero']):
+            messages.error(request, 'No tienes permiso para modificar esta orden.')
+            return redirect('editar_orden', id=orden.id)
+
         orden.estado_orden = request.POST.get('estado_orden', orden.estado_orden)
         orden.save()
         messages.success(request, 'Orden actualizada exitosamente')
@@ -449,7 +485,7 @@ def editar_orden(request, id):
     return render(request, 'gestion/orden_detail.html', context)
 
 
-@login_required
+@role_required(['Administrador','Mesero'])
 def agregar_detalle_orden(request, orden_id):
     """Agregar detalle a una orden"""
     orden = get_object_or_404(Orden, id=orden_id)
@@ -472,7 +508,7 @@ def agregar_detalle_orden(request, orden_id):
     return redirect('editar_orden', id=orden_id)
 
 
-@login_required
+@role_required(['Administrador','Mesero'])
 def eliminar_detalle_orden(request, id):
     """Eliminar detalle de una orden"""
     detalle = get_object_or_404(DetalleOrden, id=id)
@@ -489,7 +525,7 @@ def eliminar_detalle_orden(request, id):
     return redirect('editar_orden', id=orden_id)
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_orden(request, id):
     """Eliminar orden"""
     orden = get_object_or_404(Orden, id=id)
@@ -506,18 +542,42 @@ def eliminar_orden(request, id):
     return render(request, 'gestion/orden_confirm_delete.html', {'orden': orden})
 
 
+@role_required(['Administrador'])
+def Lista_usuarios(request):
+    """Listar usuarios y sus roles"""
+    usuarios = User.objects.order_by('username')
+    return render(request, 'gestion/usuarios.html', {'usuarios': usuarios})
+
+
+@role_required(['Administrador'])
+def editar_usuario(request, id):
+    """Asignar rol a un usuario"""
+    usuario = get_object_or_404(User, id=id)
+    roles = Group.objects.filter(name__in=['Administrador', 'Mesero', 'Cajero'])
+
+    if request.method == 'POST':
+        rol_seleccionado = request.POST.get('role')
+        usuario.groups.clear()
+        if rol_seleccionado:
+            group, _ = Group.objects.get_or_create(name=rol_seleccionado)
+            usuario.groups.add(group)
+        messages.success(request, 'Rol actualizado correctamente')
+        return redirect('lista_usuarios')
+
+    return render(request, 'gestion/usuario_form.html', {'usuario': usuario, 'roles': roles})
+
 
 # CRUD Factura
 
 
-@login_required
+@role_required(['Administrador','Cajero'])
 def Lista_facturas(request):
     """Listar todas las facturas"""
     facturas = Factura.objects.all().order_by('-fecha_factura')
     return render(request, 'gestion/facturas.html', {'facturas': facturas})
 
 
-@login_required
+@role_required(['Administrador','Cajero'])
 def crear_factura(request):
     """Crear nueva factura"""
     ordenes_sin_factura = Orden.objects.exclude(factura__isnull=False)
@@ -560,7 +620,7 @@ def crear_factura(request):
     return render(request, 'gestion/factura_form.html', context)
 
 
-@login_required
+@role_required(['Administrador'])
 def eliminar_factura(request, id):
     """Eliminar factura"""
     factura = get_object_or_404(Factura, id=id)
