@@ -16,7 +16,7 @@ def has_group(user, group_names):
 
     return False
 
-@register.simple_tag
+@register.filter
 def user_role(user):
     if not user.is_authenticated:
         return ''

@@ -78,10 +78,11 @@ def register_view(request):
         else:
             # Crear usuario
             user = User.objects.create_user(username=username, email=email, password=password1)
-            try:
-                group = Group.objects.get(name='Mesero')
-            except Group.DoesNotExist:
-                group = Group.objects.create(name='Mesero')
+            # Asignar grupo según selección (solo Mesero o Cajero pueden auto-registrarse)
+            selected_role = request.POST.get('role', 'Mesero')
+            if selected_role not in ['Mesero', 'Cajero']:
+                selected_role = 'Mesero'
+            group, _ = Group.objects.get_or_create(name=selected_role)
             user.groups.add(group)
             login(request, user)
             messages.success(request, 'Registro exitoso. Bienvenido al sistema')
