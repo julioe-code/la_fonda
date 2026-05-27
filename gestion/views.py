@@ -118,7 +118,7 @@ def inicio(request):
 # CRUD Cliente
 
 
-@login_required
+@role_required(['Administrador','Mesero'])
 def Lista_clientes(request):
     """Listar todos los clientes"""
     clientes = Cliente.objects.all().order_by('-id')

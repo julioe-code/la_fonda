@@ -1,4 +1,5 @@
 {% extends 'gestion/base.html' %}
+{% load role_tags %}
 
 {% block title %}Panel de Control - Restaurante Pasta La Vista{% endblock %}
 
@@ -7,13 +8,21 @@
 <p class="section-description">Resumen general del sistema de gestión</p>
 
 <div class="hero-panel">
-    <h3>Bienvenido, {{ request.user.username }}</h3>
-    <p>Administra clientes, empleados, mesas, órdenes y facturas con una interfaz moderna y fácil de usar.</p>
+    <h3>Bienvenido, {{ request.user.username }} - {{ user|user_role }}</h3>
+    <p>Accede a las funciones del sistema según tu rol y mantén el restaurante organizado.</p>
     <div class="hero-links">
-        <a href="{% url 'crear_cliente' %}" class="btn btn-light">Nuevo Cliente</a>
-        <a href="{% url 'crear_empleado' %}" class="btn btn-light">Nuevo Empleado</a>
-        <a href="{% url 'crear_mesa' %}" class="btn btn-light">Nueva Mesa</a>
-        <a href="{% url 'crear_plato' %}" class="btn btn-light">Nuevo Plato</a>
+        {% if user|has_group:'Administrador' %}
+            <a href="{% url 'crear_cliente' %}" class="btn btn-light">Nuevo Cliente</a>
+            <a href="{% url 'crear_empleado' %}" class="btn btn-light">Nuevo Empleado</a>
+            <a href="{% url 'crear_mesa' %}" class="btn btn-light">Nueva Mesa</a>
+            <a href="{% url 'crear_plato' %}" class="btn btn-light">Nuevo Plato</a>
+        {% endif %}
+        {% if user|has_group:'Administrador,Mesero' %}
+            <a href="{% url 'crear_orden' %}" class="btn btn-light">Nueva Orden</a>
+        {% endif %}
+        {% if user|has_group:'Administrador,Cajero' %}
+            <a href="{% url 'crear_factura' %}" class="btn btn-light">Nueva Factura</a>
+        {% endif %}
     </div>
 </div>
 
